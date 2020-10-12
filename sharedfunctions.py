@@ -526,17 +526,18 @@ def getprofileinfo(myprofile):
      # get the profile environment variable to use it
     # if it is not set default to the default profile
 
-    return_dict={}
 
     if myprofile in data:
 
         expiry=data[myprofile]['expiry']
-        print("Token expires at: "+expiry)
-        return_dict['expiry']=expiry
-
+        print("Note your authentication token expires at: "+expiry)
 
     else:
-        print("NOTE you are not logged in.")
+
+        print("ERROR: access token not in file: ", credential_file)
+        print("ERROR: Try refreshing your token with sas-admin auth login")
+        sys.exit()
+
 
     # note the path to the profile is hard-coded right now
     endpointfile=os.path.join(os.path.expanduser('~'),'.sas','config.json')
@@ -560,9 +561,7 @@ def getprofileinfo(myprofile):
     # check that information is in profile
     if myprofile in data:
         baseurl=data[myprofile]['sas-endpoint']
-        print("Endpoint: "+baseurl)
-        return_dict['endpoint']=baseurl
-
+        print("Endpoint is: "+baseurl)
     else:
         print("ERROR: profile "+myprofile+" does not exist. Recreate profile with sas-admin profile init.")
 
@@ -576,11 +575,8 @@ def getprofileinfo(myprofile):
         print("NOTE: Not logged in.")
 
     else:
-        print("Userid: "+ result['id'])
-        print("Name: "+result['name'])
-        return_dict['cur_user']= result['id']
-
-    return return_dict
+        print("Logged on as id: "+ result['id'])
+        print("Logged on as name: "+result['name'])
 
 
 
