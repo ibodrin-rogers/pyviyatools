@@ -536,10 +536,7 @@ def getprofileinfo(myprofile):
 
 
     else:
-
-        print("MOTE you are not logged in.)
-
-
+        print("NOTE you are not logged in.")
 
     # note the path to the profile is hard-coded right now
     endpointfile=os.path.join(os.path.expanduser('~'),'.sas','config.json')
