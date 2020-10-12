@@ -152,8 +152,8 @@ if profileexists:
           subprocess.call(command, shell=True)
 
        else:
-          print("Note token expires in approximately " +str(int(timeleft_in_s/3600))+  " hours at " + expiry )
-          print("Note no logon required")
+          print("NOTE: token expires in approximately " +str(int(timeleft_in_s/3600))+  " hours at " + expiry )
+          print("NOTE: no logon required")
 
     else:
        print('ERROR: '+fname+' does not exist')

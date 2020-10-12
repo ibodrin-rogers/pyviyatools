@@ -530,7 +530,7 @@ def getprofileinfo(myprofile):
     if myprofile in data:
 
         expiry=data[myprofile]['expiry']
-        print("Note your authentication token expires at: "+expiry)
+        print("Token expires at: "+expiry)
 
     else:
 
@@ -561,7 +561,7 @@ def getprofileinfo(myprofile):
     # check that information is in profile
     if myprofile in data:
         baseurl=data[myprofile]['sas-endpoint']
-        print("Endpoint is: "+baseurl)
+        print("Endpoint: "+baseurl)
     else:
         print("ERROR: profile "+myprofile+" does not exist. Recreate profile with sas-admin profile init.")
 
@@ -575,8 +575,8 @@ def getprofileinfo(myprofile):
         print("NOTE: Not logged in.")
 
     else:
-        print("Logged on as id: "+ result['id'])
-        print("Logged on as name: "+result['name'])
+        print("Userid: "+ result['id'])
+        print("Name: "+result['name'])
 
     return expiry
 
