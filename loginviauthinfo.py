@@ -73,6 +73,10 @@ parser.add_argument("-f","--file", help="Enter the path to the authinfo file.",d
 args = parser.parse_args()
 authfile=args.file
 
+
+now=dt.today()
+
+
 # Read from the authinfo file in your home directory
 fname=os.path.join(os.path.expanduser('~'),authfile)
 
@@ -80,75 +84,78 @@ fname=os.path.join(os.path.expanduser('~'),authfile)
 myprofile=os.environ.get("SAS_CLI_PROFILE","Default")
 print("Logging in with profile: ",myprofile )
 
-# Only logon if the token has expired
+# get hostname from profile
+endpointfile=os.path.join(os.path.expanduser('~'),'.sas','config.json')
+access_file=file_accessible(endpointfile,'r')
+badprofile=0
 
-now=dt.today()
-
-# get the expiry date
-expiry=getprofileinfo(myprofile)
-expiry=expiry[:-1]
-expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
-howlongleft=expiry_dt - now
-timeleft_in_s = howlongleft.total_seconds()
-
-# if token expires in under 15 minutes re-authenticate
-if timeleft_in_s < 900:
-
-    # get hostname from profile
-    endpointfile=os.path.join(os.path.expanduser('~'),'.sas','config.json')
-    access_file=file_accessible(endpointfile,'r')
-    badprofile=0
-
-    #profile does not exist
-    if access_file==False:
-        badprofile=1
-        host='default'
+#profile does not exist
+if access_file==False:
+    badprofile=1
+    host='default'
 
 
-    #profile is empty file
-    if os.stat(endpointfile).st_size==0:
-        badprofile=1
-        host='default'
+#profile is empty file
+if os.stat(endpointfile).st_size==0:
+    badprofile=1
+    host='default'
 
-    # get json from profile
+# get json from profile
 
-    if not badprofile:
+if not badprofile:
 
-        with open(endpointfile) as json_file:
-            data = json.load(json_file)
+    with open(endpointfile) as json_file:
+        data = json.load(json_file)
 
-        # get the hostname from the current profile
-        if myprofile in data:
-            urlparts=urlparse(data[myprofile]['sas-endpoint'])
-            host=urlparts.netloc
-            print("Getting Credentials for: "+host)
-            profileexists=1
+    # get the hostname from the current profile
+    if myprofile in data:
+        urlparts=urlparse(data[myprofile]['sas-endpoint'])
+        host=urlparts.netloc
+        print("Getting Credentials for: "+host)
+        profileexists=1
 
-        else: #without a profile don't know the hostname
-            profileexists=0
-            print("ERROR: profile "+myprofile+" does not exist. Recreate profile with sas-admin profile init.")
+    else: #without a profile don't know the hostname
+        profileexists=0
+        print("ERROR: profile "+myprofile+" does not exist. Recreate profile with sas-admin profile init.")
 
 
-    if profileexists:
+if profileexists:
 
-       # based on the hostname get the credentials and login
-        if os.path.isfile(fname):
+    # based on the hostname get the credentials and login
+    if os.path.isfile(fname):
 
-           secrets = netrc.netrc(fname)
-           username, account, password = secrets.authenticators( host )
+       secrets = netrc.netrc(fname)
+       username, account, password = secrets.authenticators( host )
 
-        if debug:
-            print('user: '+username)
-            print('profile: '+myprofile)
-            print('host: '+host)
+       if debug:
+          print('user: '+username)
+          print('profile: '+myprofile)
+          print('host: '+host)
 
-        #quote the password string for posix systems
-        if (os.name =='posix'): command=clidir+"sas-admin  --profile "+myprofile+ " auth login -u "+username+ " -p '"+password+"'"
-        else: command=clidir+'sas-admin --profile '+myprofile+ ' auth login -u '+username+ ' -p '+password
-        subprocess.call(command, shell=True)
+       expiry=getprofileinfo(myprofile)
+       expiry=expiry[:-1]
 
-    else: print('ERROR: '+fname+' does not exist')
+       expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
 
-else:
-    print("Note token expires in approximately " +str(int(timeleft_in_s/3600))+  " hours at " + expiry )
-    print("Note no logon required")
+       howlongleft=expiry_dt - now
+       timeleft_in_s = howlongleft.total_seconds()
+
+       #print ('Token expires in ' + str(timeleft_in_s))
+
+       # if token expires in under 15 minutes re-authenticate
+       if timeleft_in_s < 900:
+
+          #quote the password string for posix systems
+          if (os.name =='posix'): command=clidir+"sas-admin  --profile "+myprofile+ " auth login -u "+username+ " -p '"+password+"'"
+          else: command=clidir+'sas-admin --profile '+myprofile+ ' auth login -u '+username+ ' -p '+password
+
+          subprocess.call(command, shell=True)
+
+       else:
+          print("Note token expires in approximately " +str(int(timeleft_in_s/3600))+  " hours at " + expiry )
+          print("Note no logon required")
+
+    else:
+       print('ERROR: '+fname+' does not exist')
+
+
