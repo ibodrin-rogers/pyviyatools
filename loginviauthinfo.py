@@ -74,6 +74,7 @@ parser.add_argument("--forcelogin", help="Force login to happen.",action="store_
 
 args = parser.parse_args()
 authfile=args.file
+forcelogin-args.forcelogin
 
 now=dt.today()
 
@@ -144,8 +145,8 @@ if profileexists:
 
        #print ('Token expires in ' + str(timeleft_in_s))
 
-       # if token expires in under 15 minutes re-authenticate or if user has changed
-       if ((timeleft_in_s < 900) or (cur_user != username)):
+       # if token expires in under 15 minutes re-authenticate or if user has changed or if forced to
+       if ((timeleft_in_s < 900) or (cur_user != username) or forcelogin):
 
           #quote the password string for posix systems
           print ("NOTE: logging on as "+ username )
