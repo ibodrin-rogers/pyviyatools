@@ -70,13 +70,12 @@ profileexists=0
 # get input parameters
 parser = argparse.ArgumentParser(description="Authinfo File")
 parser.add_argument("-f","--file", help="Enter the path to the authinfo file.",default='.authinfo')
-parser.add_argument("-fl","--forcelogin", help="Force login to happen.",action-"store_true")
+parser.add_argument("--forcelogin", help="Force login to happen.",action="store_true")
+
 args = parser.parse_args()
 authfile=args.file
 
-
 now=dt.today()
-
 
 # Read from the authinfo file in your home directory
 fname=os.path.join(os.path.expanduser('~'),authfile)
