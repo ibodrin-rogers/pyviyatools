@@ -4,7 +4,7 @@ loginviauthinfo.py is used to read the credentials from a secure location and au
 
 SAS Documents creating authinfo files:
 
-In the documnettation it says 
+In the documnetation it says
 
 "The format of an authinfo file is based on the .netrc file specification that is used for FTP login. In addition to the .netrc file standards, the authinfo specification allows for putting commands in the file, as well as using quoted strings for passwords. The quoted strings allow for spaces within passwords and user IDs. "
 
@@ -17,9 +17,9 @@ The .netrc format is documented here https://www.ibm.com/support/knowledgecenter
 
 Related post: https://communities.sas.com/t5/SAS-Communities-Library/Automating-post-deployment-SAS-Viya-tasks-with-REST-and-the/ta-p/603304
 
-Example of file. 
+Example of file.
 
-First line specifies the default userid and password if no machine is specified. 
+First line specifies the default userid and password if no machine is specified.
 
 Second line specifies a machine and the userid and password for that machine.
 
@@ -31,3 +31,5 @@ machine sasviya01.race.sas.com user sasadm2 password mpass2
 ```
 
 It is very similair to the .authinfo format, but not exactly the same.
+
+The tool will log you on as the user in the authinfo file if your existing token is within 15 minutes of expiring.
