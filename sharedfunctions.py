@@ -526,11 +526,14 @@ def getprofileinfo(myprofile):
      # get the profile environment variable to use it
     # if it is not set default to the default profile
 
+    return_dict={}
 
     if myprofile in data:
 
         expiry=data[myprofile]['expiry']
         print("Token expires at: "+expiry)
+        return_dict['expiry']=expiry
+
 
     else:
 
@@ -562,6 +565,8 @@ def getprofileinfo(myprofile):
     if myprofile in data:
         baseurl=data[myprofile]['sas-endpoint']
         print("Endpoint: "+baseurl)
+        return_dict['endpoint']=baseurl
+
     else:
         print("ERROR: profile "+myprofile+" does not exist. Recreate profile with sas-admin profile init.")
 
@@ -577,8 +582,9 @@ def getprofileinfo(myprofile):
     else:
         print("Userid: "+ result['id'])
         print("Name: "+result['name'])
+        return_dict['cur_user']= result['id']
 
-    return expiry
+    return return_dict
 
 
 

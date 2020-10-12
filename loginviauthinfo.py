@@ -132,7 +132,9 @@ if profileexists:
           print('profile: '+myprofile)
           print('host: '+host)
 
-       expiry=getprofileinfo(myprofile)
+       current_info=getprofileinfo(myprofile)
+       print(current_info)
+
        expiry=expiry[:-1]
 
        expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
