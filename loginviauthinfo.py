@@ -58,7 +58,7 @@ import json
 import time
 from datetime import datetime as dt, timedelta as td
 
-from sharedfunctions import file_accessible, getprofileinfo
+from sharedfunctions import file_accessible, callrestapi
 
 try:
     # Python 3
@@ -139,12 +139,29 @@ if profileexists:
     # if you cannot read the credential file then try a  logon
     if access_file==False: forcelogin=True
     else:
+
+        # get credential info from file
         with open(credential_file) as json_file:
             data = json.load(json_file)
 
-        # get expiry date if there is a credential
-        if myprofile in data: expiry=data[myprofile]['expiry']
+        # get expiry date if there is a credential else forcelogin
+        if myprofile in data:
+            expiry=data[myprofile]['expiry']
 
+            expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
+
+            howlongleft=expiry_dt - now
+            timeleft_in_s = howlongleft.total_seconds()
+
+            cur_user=None
+            # if we are logged in get the current user
+            if howlongleft > 0:
+                reqval="/identities/users/@currentUser"
+                reqtype='get'
+                result=callrestapi(reqval,reqtype)
+                cur_user= result['id']
+
+        else:  forcelogin=True
 
     # based on the hostname get the credentials and login
     if os.path.isfile(fname):
@@ -156,22 +173,6 @@ if profileexists:
           print('user: '+username)
           print('profile: '+myprofile)
           print('host: '+host)
-
-
-       expiry=current_info["expiry"][:-1]
-       expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
-
-       howlongleft=expiry_dt - now
-       timeleft_in_s = howlongleft.total_seconds()
-
-       cur_user=None
-       # if we are logged in get the current user
-       if howlongleft > 0:
-          reqval="/identities/users/@currentUser"
-          reqtype='get'
-          result=callrestapi(reqval,reqtype)
-          cur_user= result['id']
-
 
        # if token expires in under 15 minutes re-authenticate or if user has changed or if forced to
        if ((timeleft_in_s < 900) or (cur_user != username) or forcelogin):
