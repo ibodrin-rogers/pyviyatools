@@ -23,7 +23,7 @@
 # 18OCT2019 quote the password in the CLI step to deal with special characters
 # 12NOV2019 do quote the password for windows
 # 12NOV2019 deal with urlparse on python 3
-# 10OCT2020 only logon if the togen is close to expiry
+# 10OCT2020 only logon if the token is close to expiry or user changes
 #
 # Copyright © 2018, SAS Institute Inc., Cary, NC, USA.  All Rights Reserved.
 #
