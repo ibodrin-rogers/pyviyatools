@@ -4,6 +4,14 @@
 # IMPORTANT: calls the sas-admin CLI. Change the variable below if your CLI is not
 # installed in the default location.
 #
+# Login as the user specified in the .authinfo file. If no file is specifiied use the .authinfo file in
+# the users current home-directory
+#
+# Will only actually logon if:
+# 1) the current token is within 15 minutes of expiring OR
+# 2) the user changes
+# 3) --forcelogin is specified
+#
 # usage python loginviauthinfo.py
 #              loginviauthinfo.py -f /tmp/myfile
 #
