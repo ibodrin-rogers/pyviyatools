@@ -23,6 +23,7 @@
 # 18OCT2019 quote the password in the CLI step to deal with special characters
 # 12NOV2019 do quote the password for windows
 # 12NOV2019 deal with urlparse on python 3
+# 10OCT2020 only logon if the togen is close to expiry
 #
 # Copyright © 2018, SAS Institute Inc., Cary, NC, USA.  All Rights Reserved.
 #
@@ -46,6 +47,8 @@ import platform
 import os
 import argparse
 import json
+import time
+from datetime import datetime as dt, timedelta as td
 
 from sharedfunctions import file_accessible
 
@@ -64,7 +67,7 @@ clidir='/opt/sas/viya/home/bin/'
 debug=0
 profileexists=0
 
-# get input parameters	
+# get input parameters
 parser = argparse.ArgumentParser(description="Authinfo File")
 parser.add_argument("-f","--file", help="Enter the path to the authinfo file.",default='.authinfo')
 args = parser.parse_args()
@@ -77,58 +80,76 @@ fname=os.path.join(os.path.expanduser('~'),authfile)
 myprofile=os.environ.get("SAS_CLI_PROFILE","Default")
 print("Logging in with profile: ",myprofile )
 
-# get hostname from profile
-endpointfile=os.path.join(os.path.expanduser('~'),'.sas','config.json')
-access_file=file_accessible(endpointfile,'r')
-badprofile=0
+# Only logon if the token has expired
 
-#profile does not exist
-if access_file==False:
-    badprofile=1 
-    host='default'
+now=dt.today()
 
+# get the expiry date
+expiry=getprofileinfo(myprofile)
+expiry=expiry[:-1]
+expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
+howlongleft=expiry_dt - now
+timeleft_in_s = howlongleft.total_seconds()
 
-#profile is empty file
-if os.stat(endpointfile).st_size==0: 
-    badprofile=1
-    host='default'
+# if token expires in under 15 minutes re-authenticate
+if timeleft_in_s < 900:
 
-# get json from profile
+    # get hostname from profile
+    endpointfile=os.path.join(os.path.expanduser('~'),'.sas','config.json')
+    access_file=file_accessible(endpointfile,'r')
+    badprofile=0
 
-if not badprofile:
-
-    with open(endpointfile) as json_file:
-        data = json.load(json_file)
-
-    # get the hostname from the current profile
-    if myprofile in data:
-        urlparts=urlparse(data[myprofile]['sas-endpoint'])
-        host=urlparts.netloc
-        print("Getting Credentials for: "+host)
-        profileexists=1
-
-    else: #without a profile don't know the hostname
-        profileexists=0
-        print("ERROR: profile "+myprofile+" does not exist. Recreate profile with sas-admin profile init.")
+    #profile does not exist
+    if access_file==False:
+        badprofile=1
+        host='default'
 
 
-if profileexists:
+    #profile is empty file
+    if os.stat(endpointfile).st_size==0:
+        badprofile=1
+        host='default'
 
-    # based on the hostname get the credentials and login
-    if os.path.isfile(fname):
+    # get json from profile
 
-       secrets = netrc.netrc(fname)
-       username, account, password = secrets.authenticators( host )
+    if not badprofile:
 
-       if debug:
-          print('user: '+username)
-          print('profile: '+myprofile)
-          print('host: '+host)
-          
-       #quote the password string for posix systems
-       if (os.name =='posix'): command=clidir+"sas-admin  --profile "+myprofile+ " auth login -u "+username+ " -p '"+password+"'"
-       else: command=clidir+'sas-admin --profile '+myprofile+ ' auth login -u '+username+ ' -p '+password 
-       subprocess.call(command, shell=True)
-    
-    else:
-       print('ERROR: '+fname+' does not exist') 
+        with open(endpointfile) as json_file:
+            data = json.load(json_file)
+
+        # get the hostname from the current profile
+        if myprofile in data:
+            urlparts=urlparse(data[myprofile]['sas-endpoint'])
+            host=urlparts.netloc
+            print("Getting Credentials for: "+host)
+            profileexists=1
+
+        else: #without a profile don't know the hostname
+            profileexists=0
+            print("ERROR: profile "+myprofile+" does not exist. Recreate profile with sas-admin profile init.")
+
+
+    if profileexists:
+
+        # based on the hostname get the credentials and login
+        if os.path.isfile(fname):
+
+        secrets = netrc.netrc(fname)
+        username, account, password = secrets.authenticators( host )
+
+        if debug:
+            print('user: '+username)
+            print('profile: '+myprofile)
+            print('host: '+host)
+
+        #quote the password string for posix systems
+        if (os.name =='posix'): command=clidir+"sas-admin  --profile "+myprofile+ " auth login -u "+username+ " -p '"+password+"'"
+        else: command=clidir+'sas-admin --profile '+myprofile+ ' auth login -u '+username+ ' -p '+password
+        subprocess.call(command, shell=True)
+
+        else:
+        print('ERROR: '+fname+' does not exist')
+
+else:
+    print("Note token expires in approximately " +str(int(timeleft_in_s/3600))+  " hours at " + expiry )
+    print("Note no logon required")
