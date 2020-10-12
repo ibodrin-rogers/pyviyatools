@@ -68,7 +68,7 @@ debug=0
 profileexists=0
 
 # get input parameters
-parser = argparse.ArgumentParser(description="Authinfo File")
+parser = argparse.ArgumentParser(description="Optionally specify an authinfo file")
 parser.add_argument("-f","--file", help="Enter the path to the authinfo file.",default='.authinfo')
 parser.add_argument("--forcelogin", help="Force login to happen.",action="store_true")
 
