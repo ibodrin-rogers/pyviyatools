@@ -133,9 +133,9 @@ if profileexists:
           print('host: '+host)
 
        current_info=getprofileinfo(myprofile)
-       print(current_info)
 
-       expiry=expiry[:-1]
+       expiry=current_info["expiry"][:-1]
+       cur_user=current_info["cur_user"]
 
        expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
 
@@ -144,10 +144,11 @@ if profileexists:
 
        #print ('Token expires in ' + str(timeleft_in_s))
 
-       # if token expires in under 15 minutes re-authenticate
-       if timeleft_in_s < 900:
+       # if token expires in under 15 minutes re-authenticate or if user has changed
+       if ((timeleft_in_s < 900) or (cur_user != username)):
 
           #quote the password string for posix systems
+          print ("NOTE: logging on as "+ username )
           if (os.name =='posix'): command=clidir+"sas-admin  --profile "+myprofile+ " auth login -u "+username+ " -p '"+password+"'"
           else: command=clidir+'sas-admin --profile '+myprofile+ ' auth login -u '+username+ ' -p '+password
 
