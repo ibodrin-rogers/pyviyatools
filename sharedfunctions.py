@@ -537,9 +537,8 @@ def getprofileinfo(myprofile):
 
     else:
 
-        print("ERROR: access token not in file: ", credential_file)
-        print("ERROR: Try refreshing your token with sas-admin auth login")
-        sys.exit()
+        print("MOTE you are not logged in.)
+
 
 
     # note the path to the profile is hard-coded right now
