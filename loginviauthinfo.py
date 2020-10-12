@@ -74,7 +74,7 @@ parser.add_argument("--forcelogin", help="Force login to happen.",action="store_
 
 args = parser.parse_args()
 authfile=args.file
-forcelogin-args.forcelogin
+forcelogin=args.forcelogin
 
 now=dt.today()
 
