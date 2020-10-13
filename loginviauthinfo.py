@@ -151,7 +151,8 @@ if profileexists:
             expiry=data[myprofile]['expiry']
 
             if expiry:
-                print(expiry)
+
+                expiry=expiry[:-1]
                 expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
                 howlongleft=expiry_dt - now
                 timeleft_in_s = howlongleft.total_seconds()
