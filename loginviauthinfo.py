@@ -74,6 +74,7 @@ clidir='/opt/sas/viya/home/bin/'
 
 debug=0
 profileexists=0
+timeleft_in_s=0
 
 # get input parameters
 parser = argparse.ArgumentParser(description="Optionally specify an authinfo file")
@@ -163,7 +164,7 @@ if profileexists:
                     reqtype='get'
                     result=callrestapi(reqval,reqtype)
                     cur_user= result['id']
-            else: forcelogin-True
+            else: forcelogin=True
 
         else:  forcelogin=True
 
