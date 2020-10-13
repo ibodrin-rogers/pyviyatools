@@ -146,8 +146,9 @@ if profileexists:
 
         # get expiry date if there is a credential else forcelogin
         if myprofile in data:
-            expiry=data[myprofile]['expiry']
 
+            expiry=data[myprofile]['expiry']
+            print(expiry)
             expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
 
             howlongleft=expiry_dt - now
