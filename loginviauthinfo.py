@@ -143,14 +143,14 @@ if profileexists:
         # get credential info from file
         with open(credential_file) as json_file:
             data = json.load(json_file)
+            print(data)
 
         # get expiry date if there is a credential else forcelogin
         if myprofile in data:
 
             expiry=data[myprofile]['expiry']
-            print(expiry)
-            expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
 
+            expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
             howlongleft=expiry_dt - now
             timeleft_in_s = howlongleft.total_seconds()
 
