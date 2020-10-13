@@ -159,7 +159,7 @@ if profileexists:
 
                 cur_user=None
                 # if we are logged in get the current user
-                if howlongleft > 0:
+                if timeleft_in_s > 0:
                     reqval="/identities/users/@currentUser"
                     reqtype='get'
                     result=callrestapi(reqval,reqtype)
@@ -175,9 +175,9 @@ if profileexists:
        secrets = netrc.netrc(fname)
        username, account, password = secrets.authenticators( host )
 
-       print('user: '+username)
-       print('profile: '+myprofile)
-       print('host: '+host)
+       print('User: '+username)
+       print('Profile: '+myprofile)
+       print('Host: '+host)
 
        # if token expires in under 15 minutes re-authenticate or if user has changed or if forced to
        if ((timeleft_in_s < 900) or (cur_user != username) or forcelogin):
