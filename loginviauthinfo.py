@@ -150,7 +150,7 @@ if profileexists:
 
             expiry=data[myprofile]['expiry']
 
-            if expiry not blank
+            if expiry:
 
                 expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
                 howlongleft=expiry_dt - now
