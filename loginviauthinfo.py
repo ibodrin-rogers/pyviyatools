@@ -160,11 +160,12 @@ if profileexists:
 
                 cur_user=None
                 # if we are logged in get the current user
-                if timeleft_in_s > 0:
+                if timeleft_in_s > 900:
                     reqval="/identities/users/@currentUser"
                     reqtype='get'
                     result=callrestapi(reqval,reqtype)
                     cur_user= result['id']
+                else: forcelogin=True
 
             else: forcelogin=True
 
