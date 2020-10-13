@@ -150,17 +150,20 @@ if profileexists:
 
             expiry=data[myprofile]['expiry']
 
-            expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
-            howlongleft=expiry_dt - now
-            timeleft_in_s = howlongleft.total_seconds()
+            if expiry not blank
 
-            cur_user=None
-            # if we are logged in get the current user
-            if howlongleft > 0:
-                reqval="/identities/users/@currentUser"
-                reqtype='get'
-                result=callrestapi(reqval,reqtype)
-                cur_user= result['id']
+                expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
+                howlongleft=expiry_dt - now
+                timeleft_in_s = howlongleft.total_seconds()
+
+                cur_user=None
+                # if we are logged in get the current user
+                if howlongleft > 0:
+                    reqval="/identities/users/@currentUser"
+                    reqtype='get'
+                    result=callrestapi(reqval,reqtype)
+                    cur_user= result['id']
+            else: forcelogin-True
 
         else:  forcelogin=True
 
