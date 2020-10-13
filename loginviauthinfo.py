@@ -156,6 +156,7 @@ if profileexists:
                 expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
                 howlongleft=expiry_dt - now
                 timeleft_in_s = howlongleft.total_seconds()
+                print(timeleft_in_s)
 
                 cur_user=None
                 # if we are logged in get the current user
