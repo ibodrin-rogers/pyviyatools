@@ -144,7 +144,6 @@ if profileexists:
         # get credential info from file
         with open(credential_file) as json_file:
             data = json.load(json_file)
-            print(data)
 
         # get expiry date if there is a credential else forcelogin
         if myprofile in data:
@@ -152,7 +151,7 @@ if profileexists:
             expiry=data[myprofile]['expiry']
 
             if expiry:
-
+                print(expiry)
                 expiry_dt=dt.strptime(expiry,"%Y-%m-%dT%H:%M:%S")
                 howlongleft=expiry_dt - now
                 timeleft_in_s = howlongleft.total_seconds()
@@ -164,6 +163,7 @@ if profileexists:
                     reqtype='get'
                     result=callrestapi(reqval,reqtype)
                     cur_user= result['id']
+
             else: forcelogin=True
 
         else:  forcelogin=True
@@ -174,10 +174,9 @@ if profileexists:
        secrets = netrc.netrc(fname)
        username, account, password = secrets.authenticators( host )
 
-       if debug:
-          print('user: '+username)
-          print('profile: '+myprofile)
-          print('host: '+host)
+       print('user: '+username)
+       print('profile: '+myprofile)
+       print('host: '+host)
 
        # if token expires in under 15 minutes re-authenticate or if user has changed or if forced to
        if ((timeleft_in_s < 900) or (cur_user != username) or forcelogin):
